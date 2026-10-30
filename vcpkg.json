@@ -1,0 +1,9 @@
+{
+  "name": "filescope",
+  "version": "0.1.0",
+  "dependencies": [
+    "openssl",
+    "nlohmann-json",
+    "gtest"
+  ]
+}
