@@ -1,4 +1,6 @@
-#include "FiileBuffer.h"
+#include <climits>
+
+#include "core/FileBuffer.h"
 
 FileBuffer::FileBuffer(const std::filesystem::path& path)
 {
@@ -18,7 +20,7 @@ FileBuffer::FileBuffer(const std::filesystem::path& path)
 
 }
 
-FileBuffer::FileBuffer(FileBuffer&& other) noexcept
+FileBuffer::FileBuffer(FileBuffer&& other) noexcept 
 {
 	data_ = std::move(other.data_);
 }
@@ -34,7 +36,7 @@ FileBuffer& FileBuffer::operator=(FileBuffer&& other) noexcept
 
 std::span<const std::byte> FileBuffer::bytes() const noexcept
 {
-	return { data_.data(), data_.size() };
+	return {data_.data(), data_.size()};
 }
 
 uintmax_t FileBuffer::size() const noexcept

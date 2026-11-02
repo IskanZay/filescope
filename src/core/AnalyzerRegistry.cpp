@@ -1,4 +1,4 @@
-#include "AnalyzerRegistry.h"
+#include "core/AnalyzerRegistry.h"
 
 void AnalyzerRegistry::registerFactory(std::string name, Factory f)
 {
@@ -12,8 +12,13 @@ std::vector<std::unique_ptr<IAnalyzer>> AnalyzerRegistry::create_applicable(std:
 	for (auto& [name, f] : factories_)
 	{
 		auto a = f();
-		if (a->can_handle(data)) out.push_back(std::move(a));
+		if (a->can_handle(data)) 
+		{
+			out.push_back(std::move(a));
+		}
 	}
+
+	return out;
 }
 
 std::vector<std::string> AnalyzerRegistry::names() const

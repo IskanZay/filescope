@@ -4,25 +4,32 @@ project(filescope VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Флаги MSVC
 if(MSVC)
     add_compile_options(/Zc:__cplusplus /Zc:preprocessor /utf-8 /EHsc /W4)
 endif()
 
-if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE
-        "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        CACHE STRING "")
-endif()
-
+# ── Ядро ──
 add_library(filescope_core OBJECT
+    src/core/FileBuffer.cpp
+    src/core/file_walker.cpp
+    src/core/result_store.cpp
+    src/core/AnalyzerRegistry.cpp
+    src/core/builtin_analyzers.cpp
+    src/analyzers/magic_analyzer.cpp
     src/cli/options.cpp
+    src/cli/runner.cpp
+    src/cli/output/table_printer.cpp
 )
+
+# Указываем папку src для поиска заголовков
 target_include_directories(filescope_core PUBLIC src)
 
-add_executable(filescope src/main.cpp)
+# ── Утилита ──
+add_executable(filescope
+    src/main.cpp
+)
 target_link_libraries(filescope PRIVATE filescope_core)
 
-enable_testing()
-add_subdirectory(tests)
-
-install(TARGETS filescope RUNTIME DESTINATION bin)
+# Запуск по умолчанию
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT filescope)

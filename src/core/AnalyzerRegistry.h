@@ -4,8 +4,9 @@
 #include <unordered_map>
 #include <vector>
 #include <span>
+#include <string> 
 
-#include "IAnalyzer.h"
+#include "core/IAnalyzer.h"
 
 using Factory = std::function<std::unique_ptr<IAnalyzer>()>;
 
@@ -16,11 +17,6 @@ private:
 
 public:
 	void registerFactory(std::string name, Factory f);
-
 	std::vector<std::unique_ptr<IAnalyzer>> create_applicable(std::span<const std::byte> data);
-
-	std::vector <std::string> names() const;
-
-	void register_builtin_analyzers(AnalyzerRegistry& reg);
+	std::vector<std::string> names() const;
 };
-

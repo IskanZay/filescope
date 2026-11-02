@@ -1,13 +1,8 @@
 #pragma once
-#include <iostream>
-#include <string_view>
-#include <span>
-
-#include "IAnalyzer.h"
+#include "core/IAnalyzer.h"
 
 namespace filescope
 {
-
 	class MagicAnalyzer : public IAnalyzer
 	{
 	public:

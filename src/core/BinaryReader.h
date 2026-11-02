@@ -2,6 +2,9 @@
 #include <span>
 #include <optional>
 #include <string_view>
+#include <cstring>
+#include <algorithm>
+#include <type_traits>
 
 class BinaryReader
 {

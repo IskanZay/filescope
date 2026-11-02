@@ -4,13 +4,12 @@
 #include <iostream>
 #include <span>
 #include <vector>
-
-using byte = char;
+#include <fstream>
 
 class FileBuffer
 {
 private:
-	std::vector<byte> data_;
+	std::vector<std::byte> data_;
 
 public:
 	explicit FileBuffer(const std::filesystem::path& pth);
@@ -19,7 +18,7 @@ public:
 	FileBuffer(FileBuffer&& other) noexcept;
 	FileBuffer& operator=(FileBuffer&& other) noexcept;
 
-	std::span<const byte> bytes() const noexcept;
+	std::span<const std::byte> bytes() const noexcept;
 
 	uintmax_t size() const noexcept;
 };

@@ -1,4 +1,4 @@
-#include "magic_analyzer.h"
+#include "analyzers/magic_analyzer.h"
 
 namespace filescope
 {
@@ -12,7 +12,7 @@ namespace filescope
 		constexpr std::byte kElf3{ 'F' };
 	}
 
-	bool MagicAnalyzer::can_handle(std::span<const std::byte>) const
+	bool MagicAnalyzer::can_handle(std::span<const std::byte>) const noexcept
 	{
 		return true;
 	}
