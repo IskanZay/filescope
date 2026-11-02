@@ -1,5 +1,6 @@
 #pragma once
 #include <span>
+#include <string_view>
 
 #include "core/IAnalyzer.h"
 
@@ -9,10 +10,10 @@ namespace filescope
 	{
 	public:
 
-		std::string name() const { return "entropy"; }
+		std::string_view name() const noexcept override { return "entropy"; }
 
-		bool can_handle() const { return true; }
+		bool can_handle(std::span < const std::byte> data) const noexcept { return true; }
 
-		void analyze(std::span<const std::byte> data);
+		AnalysisResult analyze(std::span<const std::byte> data) override;
 	};
 }

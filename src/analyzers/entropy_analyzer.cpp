@@ -12,7 +12,9 @@ namespace filescope
 	{
 		std::size_t entropy;
 	public:
-		void calculate_entropy(std::span<const std::byte> data)
+		bool can_handle(std::span < const std::byte> data) const noexcept { return true; }
+
+		AnalisysResult analyze(std::span<const std::byte> data)
 		{
 			AnalysisResult r;
 			r.analyzer_name = "entropy";
@@ -34,6 +36,8 @@ namespace filescope
 			r.metadata["entropy"] = entropy;
 			double res = entropy / data.size();
 			if (res > 7.0) r.warnings.push_back("Suspisious file");
+
+			return r;
 		}
 	};
 }
