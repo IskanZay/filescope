@@ -6,51 +6,54 @@
 #include <algorithm>
 #include <type_traits>
 
-class BinaryReader
+namespace filescope
 {
-private:
-	std::span<const std::byte> data_;
-
-public:
-	explicit BinaryReader(std::span<std::byte> data) : data_(data) {}
-	
-	template <class T>
-	std::optional<T> read_at(std::size_t offset) const
+	class BinaryReader
 	{
-		if (offset > data_.size()) return std::nullopt;
+	private:
+		std::span<const std::byte> data_;
 
-		if (data_.size() - offset < sizeof(T)) return std::nullopt;
+	public:
+		explicit BinaryReader(std::span<const std::byte> data) : data_(data) {}
 
-		T value;
-		std::memcpy(&value, data_.data() + offset, sizeof(T));
-		return value;
-	}
+		template <class T>
+		std::optional<T> read_at(std::size_t offset) const
+		{
+			if (offset > data_.size()) return std::nullopt;
 
-	std::optional<std::string_view> read_cstr(std::size_t offset, std::size_t max_len) const
-	{
-		std::string_view sv;
-		if (offset > data_.size()) return std::nullopt;
+			if (data_.size() - offset < sizeof(T)) return std::nullopt;
 
-		const std::size_t avaible = std::min(max_len, data_.size() - offset);
-		const char* start = reinterpret_cast<const char*>(data_.data() + offset);
+			T value;
+			std::memcpy(&value, data_.data() + offset, sizeof(T));
+			return value;
+		}
 
-		std::size_t len = 0;
-		while (len < avaible && start[len] != '\0') len++;
+		std::optional<std::string_view> read_cstr(std::size_t offset, std::size_t max_len) const
+		{
+			std::string_view sv;
+			if (offset > data_.size()) return std::nullopt;
 
-		return std::string_view{ start, len };
-	}
+			const std::size_t avaible = std::min(max_len, data_.size() - offset);
+			const char* start = reinterpret_cast<const char*>(data_.data() + offset);
 
-	std::optional<std::span<const std::byte>> slice(std::size_t offset, std::size_t len)
-	{
-		if (offset > data_.size() || data_.size() - offset < len) return std::nullopt;
+			std::size_t len = 0;
+			while (len < avaible && start[len] != '\0') len++;
 
-		return data_.subspan(offset, len);
-	}
+			return std::string_view{ start, len };
+		}
 
-	std::size_t size()
-	{
-		return data_.size();
-	}
+		std::optional<std::span<const std::byte>> slice(std::size_t offset, std::size_t len)
+		{
+			if (offset > data_.size() || data_.size() - offset < len) return std::nullopt;
 
-};
+			return data_.subspan(offset, len);
+		}
+
+		std::size_t size()
+		{
+			return data_.size();
+		}
+
+	};
+}
 

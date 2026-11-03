@@ -1,6 +1,7 @@
 #include "core/builtin_analyzers.h"
 #include "analyzers/magic_analyzer.h"
 #include "analyzers/entropy_analyzer.h"
+#include <analyzers/pe_analyzer.h>
 #include <memory>
 
 namespace filescope
@@ -9,5 +10,6 @@ namespace filescope
 	{
 		reg.registerFactory("magic", []() {return std::make_unique<MagicAnalyzer>(); });
 		reg.registerFactory("entropy", []() {return std::make_unique<EntropyAnalyzer>(); });
+		reg.registerFactory("pe", []() {return std::make_unique<PeAnalyzer>(); });
 	}
 }
