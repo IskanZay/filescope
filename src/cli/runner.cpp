@@ -7,7 +7,6 @@
 #include "core/file_walker.h"
 #include "core/FileBuffer.h"
 #include "core/result_store.h"
-#include <iostream>
 
 namespace filescope::cli 
 {

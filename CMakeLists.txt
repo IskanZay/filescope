@@ -17,6 +17,7 @@ add_library(filescope_core OBJECT
     src/core/AnalyzerRegistry.cpp
     src/core/builtin_analyzers.cpp
     src/analyzers/magic_analyzer.cpp
+    src/analyzers/entropy_analyzer.cpp
     src/cli/options.cpp
     src/cli/runner.cpp
     src/cli/output/table_printer.cpp

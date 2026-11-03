@@ -4,40 +4,39 @@
 
 #include "core/AnalyzerRegistry.h"
 #include "core/IAnalyzer.h"
-
+#include "analyzers/entropy_analyzer.h"
 
 namespace filescope
 {
-	class EntropyAnalyzer : public IAnalyzer
+	bool EntropyAnalyzer::can_handle(std::span <const std::byte> data) const noexcept { return true; }
+
+	AnalysisResult EntropyAnalyzer::analyze(std::span<const std::byte> data)
 	{
-		std::size_t entropy;
-	public:
-		bool can_handle(std::span < const std::byte> data) const noexcept { return true; }
+		AnalysisResult r;
+		r.analyzer_name = "entropy";
 
-		AnalisysResult analyze(std::span<const std::byte> data)
+		std::array<std::size_t, 256> bytes;
+
+		for (auto b : data)
 		{
-			AnalysisResult r;
-			r.analyzer_name = "entropy";
-
-			std::array<unsigned char, 256> bytes;
-
-			for (auto b : data)
-			{
-				bytes[static_cast<unsigned char>(b)]++;
-			}
-
-			std::size_t entrop;
-			for (auto b : bytes)
-			{
-				entrop -= b * std::log2(b);
-			}
-			entropy = entrop;
-
-			r.metadata["entropy"] = entropy;
-			double res = entropy / data.size();
-			if (res > 7.0) r.warnings.push_back("Suspisious file");
-
-			return r;
+			bytes[static_cast<unsigned char>(b)]++;
 		}
-	};
+
+		double entrop = 0.0;
+		for (auto cnt : bytes)
+		{
+			if (cnt > 0)
+			{
+				double p = cnt / data.size();
+				entrop -= p * std::log2(p);
+			}
+		}
+		entropy = entrop;
+
+		r.metadata["entropy"] = entropy;
+		if (entropy > 7.0) r.warnings.push_back("High entropy: Suspisious file");
+
+		return r;
+	}
+
 }

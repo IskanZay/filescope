@@ -28,81 +28,62 @@ namespace filescope::cli
 		}
 	}
 
+    Options parse_argv(int argc, char** argv)
+    {
+        Options opts;
+        for (int i = 0; i < argc; i++)
+        {
+            auto [name, value] = split_eq(argv[i]);
 
-	Options parse_argv(int argc, char** argv)
-	{
-		Options opts;
-		//filescope scan ./samples --recursive --format=json
-		for (int i = 2; i < argc; i++)
-		{
-			auto [name, value] = split_eq(argv[i]);
+            if (is_flag(name))
+            {
+                if (name == "--help" || name == "-h")
+                {
+                    opts.command = Command::Help;
+                    return opts;
+                }
+                if (name == "--version" || name == "-V")
+                {
+                    opts.command = Command::Version;
+                    return opts;
+                }
+                if (name == "--recursive" || name == "-r")
+                {
+                    opts.recursive = true;
+                    continue;
+                }
+                if (name == "--verbose" || name == "-v")
+                {
+                    opts.verbose = true;
+                    continue;
+                }
+                if (name == "--format")
+                {
+                    if (value.empty())
+                    {
+                        if (i + 1 >= argc) throw std::runtime_error("--format requires a value");
+                        value = argv[++i];
+                    }
+                    if (value != "table" && value != "json")
+                    {
+                        throw std::runtime_error("--format must be <table> or <json>");
+                    }
+                    opts.format = value;
+                    continue;
+                }
 
-			if (name == "--help")
-			{
-				print_help();
-				return {};
-			}
+                throw std::runtime_error("unknown flag: " + name);
+            }
 
-			if (name == "--version")
-			{
-				print_version();
-				return {};
-			}
+            if (name == "scan") { opts.command = Command::Scan; continue; }
+            if (name == "inspect") { opts.command = Command::Inspect; continue; }
+            if (name == "identify") { opts.command = Command::Identify; continue; }
 
-			if (name == "--recursive")
-			{
-				opts.recursive = true;
-				continue;
-			}
+            opts.paths.emplace_back(argv[i]);
+        }
 
-			if (name == "--verbose")
-			{
-				opts.verbose = true;
-				continue;
-			}
-
-			if (name == "--format")
-			{
-				if (value.empty())
-				{
-					if (i + 1 >= argc) throw std::runtime_error("--format requires a value");
-					value = argv[++i];
-				}
-				if (value != "table" && value != "json")
-				{
-					throw std::runtime_error("--format must be <table> or <json>");
-				}
-				opts.format = value;
-				continue;
-			}
-
-			if (name == "scan")
-			{
-				opts.command = Command::Scan;
-				continue;
-			}
-			else if (name == "inspect")
-			{
-				opts.command = Command::Inspect;
-				continue;
-			}
-			else if (name == "identify")
-			{
-				opts.command = Command::Identify;
-				continue;
-			}
-
-			if (name.find("./") != std::string::npos)
-			{
-				opts.paths.emplace_back(argv[i]);
-				continue;
-			}
-
-			if (!is_flag(name)) throw std::runtime_error("unknown flag");
-		}
-
-		return opts;
-	}
+        return opts;
+    }
 
 	void print_help()
 	{

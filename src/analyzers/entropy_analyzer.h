@@ -8,11 +8,13 @@ namespace filescope
 {
 	class EntropyAnalyzer : public IAnalyzer
 	{
+	private:
+		double entropy;
 	public:
 
 		std::string_view name() const noexcept override { return "entropy"; }
 
-		bool can_handle(std::span < const std::byte> data) const noexcept { return true; }
+		bool can_handle(std::span < const std::byte> data) const noexcept override;
 
 		AnalysisResult analyze(std::span<const std::byte> data) override;
 	};

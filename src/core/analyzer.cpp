@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <span>
+#include <string_view>
 
 struct Warning
 {
