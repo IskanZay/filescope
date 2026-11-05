@@ -26,7 +26,7 @@ namespace filescope
 		r.analyzer_name = "pe";
 
 		//Dos заголовок
-		auto e_lfanew = reader.read_at<uint32_t>(0x3C);
+		auto e_lfanew = reader.read_at<uint32_t>(0x3C);//60-ый байт, сколько байт нужно пропустить, чтобы найти настоящий заголовок
 		if (!e_lfanew)
 		{
 			r.warnings.push_back("Broken file: no DOS header");
@@ -34,7 +34,7 @@ namespace filescope
 		}
 
 		//file header
-		auto sig = reader.read_at<uint32_t>(*e_lfanew);
+		auto sig = reader.read_at<uint32_t>(*e_lfanew);//Сигнатура PE файла
 		if (!sig || *sig != 0x00004550)
 		{
 			r.warnings.push_back("This is not PE file");
@@ -42,7 +42,7 @@ namespace filescope
 		}
 
 		//optional header
-		auto magic = reader.read_at<uint16_t>(*e_lfanew + 24);
+		auto magic = reader.read_at<uint16_t>(*e_lfanew + 24);//20 - file-header, 4 - сигнатура. пропускаем 24 байта и получаем разарядность
 		if (magic)
 		{
 			if (*magic == 0x10b) r.metadata["arch"] = "x32";

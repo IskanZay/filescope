@@ -40,7 +40,7 @@ namespace filescope
     {
         std::cout << std::left << std::setw(40) << "Path" << std::setw(12) << "Size"
             << std::setw(10) << "Format" << std::setw(8) << "Arch" << std::setw(12)
-            << "Entropy" << std::setw(12) << "Warnings\n";
+            << "Entropy" << std::setw(12) << "Warnings\n" << std::setw(12) << "Hash";
 
         for (const auto& r : reports)
         {
@@ -48,6 +48,7 @@ namespace filescope
 
             std::string arch = "-";
             std::string entropy = "-";
+            std::string hash_str = "-";
 
             for (auto a : r.analyses)
             {
@@ -62,11 +63,20 @@ namespace filescope
                     auto it = a.metadata.find("entropy");
                     if (it != a.metadata.end()) entropy = it->second;
                 }
+
+                if (a.analyzer_name == "hash") 
+                {
+                    auto it = a.metadata.find("sha256");
+                    if (it != a.metadata.end() && it->second.length() >= 8) 
+                    {
+                        hash_str = it->second.substr(0, 8); 
+                    }
+                }
             }
 
             std::cout << std::left << std::setw(40) << path_str << std::setw(12) << r.size
                 << std::setw(10) << (r.format.empty() ? "-" : r.format) << std::setw(8) 
-                << arch << std::setw(12) << entropy << std::setw(12);
+                << arch << std::setw(12) << entropy << std::setw(12) << hash_str << std::setw(12);
 
             if (!r.warnings.empty())
             {
