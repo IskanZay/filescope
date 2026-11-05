@@ -4,6 +4,11 @@
 
 FileBuffer::FileBuffer(const std::filesystem::path& path)
 {
+	if (std::filesystem::file_size(path) > 100 * 1024 * 1024) 
+	{
+		throw std::runtime_error("File is too large");
+	}
+
 	std::ifstream file(path, std::ios::binary | std::ios::ate);
 
 	if (!file) throw std::runtime_error("cannot open: " + path.string());

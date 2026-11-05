@@ -4,6 +4,8 @@
 #include <vector>
 #include <mutex>
 
+#include "core/IAnalyzer.h"
+
 namespace filescope
 {
 
@@ -13,6 +15,7 @@ namespace filescope
 		uintmax_t size;
 		std::string format;
 		std::vector<std::string> warnings;
+		std::vector<AnalysisResult> analyses;
 	};
 
 	class ResultStore

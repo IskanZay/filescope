@@ -48,6 +48,8 @@ namespace filescope::cli
                         rep.format = result.format;
                     }
 
+                    rep.analyses.push_back(result);
+
                     for (const auto& w : result.warnings) 
                     {
                         rep.warnings.push_back(w);
@@ -57,6 +59,7 @@ namespace filescope::cli
             catch (const std::exception& e) 
             {
                 rep.warnings.push_back(e.what());
+                rep.format = "ERROR";
             }
 
             store.add(std::move(rep)); 

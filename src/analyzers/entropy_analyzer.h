@@ -1,6 +1,8 @@
 #pragma once
 #include <span>
 #include <string_view>
+#include <cmath>
+#include <cstdio>
 
 #include "core/IAnalyzer.h"
 

@@ -23,6 +23,7 @@ namespace filescope
 	{
 		BinaryReader reader(data);
 		AnalysisResult r;
+		r.analyzer_name = "pe";
 
 		//Dos заголовок
 		auto e_lfanew = reader.read_at<uint32_t>(0x3C);

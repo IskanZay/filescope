@@ -1,4 +1,3 @@
-#pragma once
 #include <span>
 #include <array>
 
@@ -15,7 +14,7 @@ namespace filescope
         AnalysisResult r;
         r.analyzer_name = "entropy";
 
-        if (data.empty()) 
+        if (data.empty())
         {
             r.metadata["entropy"] = "0.00";
             return r;
@@ -44,7 +43,8 @@ namespace filescope
         snprintf(buf, sizeof(buf), "%.2f", entrop);
         r.metadata["entropy"] = buf;
 
-        if (entrop > 7.0) {
+        if (entrop > 7.0) 
+        {
             r.warnings.push_back("HIGH_ENTROPY");
         }
 
@@ -53,4 +53,3 @@ namespace filescope
 
 }
 
-}
