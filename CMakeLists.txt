@@ -25,7 +25,10 @@ add_library(filescope_core OBJECT
     src/analyzers/pe_analyzer.h 
     src/analyzers/pe_analyzer.cpp
     src/analyzers/hash_analyzer.h
-    src/analyzers/hash_analyzer.cpp)
+    src/analyzers/hash_analyzer.cpp
+    src/analyzers/elf_analyzer.h
+    src/analyzers/elf_analyzer.cpp)
+   
 
 target_include_directories(filescope_core PUBLIC src)
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <atomic>
 
 #include "cli/runner.h"
 #include "cli/output/table_printer.h"
@@ -26,43 +27,64 @@ namespace filescope::cli
             std::cerr << "No files found\n";
             return 2;
         }
-
         ResultStore store;
-        for (const auto& file : files) 
-        {
-            FileReport rep;
-            rep.path = file;
 
-            try 
+        auto worker = [&]()
             {
-                FileBuffer buf(file);
-                rep.size = buf.size();
-                auto analyzers = reg.create_applicable(buf.bytes());
-
-                for (auto& analyzer : analyzers) 
+                while (true)
                 {
-                    auto result = analyzer->analyze(buf.bytes());
+                    size_t i = next_file_id.fetch_add(1);
 
-                    if (!result.format.empty()) 
+                    if (i >= files.size()) break;
+
+                    const auto& file = files[i];
+
+                    FileReport rep;
+                    rep.path = file;
+
+                    try
                     {
-                        rep.format = result.format;
+                        FileBuffer buf(file);
+                        rep.size = buf.size();
+                        auto analyzers = reg.create_applicable(buf.bytes());
+
+                        for (auto& analyzer : analyzers)
+                        {
+                            auto result = analyzer->analyze(buf.bytes());
+
+                            if (!result.format.empty())
+                            {
+                                rep.format = result.format;
+                            }
+
+                            rep.analyses.push_back(result);
+
+                            for (const auto& w : result.warnings)
+                            {
+                                rep.warnings.push_back(w);
+                            }
+                        }
+                    }
+                    catch (const std::exception& e)
+                    {
+                        rep.warnings.push_back(e.what());
+                        rep.format = "ERROR";
                     }
 
-                    rep.analyses.push_back(result);
-
-                    for (const auto& w : result.warnings) 
-                    {
-                        rep.warnings.push_back(w);
-                    }
+                    store.add(std::move(rep));
                 }
-            }
-            catch (const std::exception& e) 
-            {
-                rep.warnings.push_back(e.what());
-                rep.format = "ERROR";
-            }
+            };
 
-            store.add(std::move(rep)); 
+        unsigned int num_threads = std::thread::hardware_concurrency();
+
+        std::vector<std::jthread> threads;
+        threads.reserve(num_threads);
+
+        {
+            for (int i = 0; i < num_threads; i++)
+            {
+                threads.emplace_back(worker);
+            }
         }
 
         auto results = store.snapshot();
