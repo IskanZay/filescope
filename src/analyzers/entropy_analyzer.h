@@ -10,8 +10,6 @@ namespace filescope
 {
 	class EntropyAnalyzer : public IAnalyzer
 	{
-	private:
-		double entropy;
 	public:
 
 		std::string_view name() const noexcept override { return "entropy"; }

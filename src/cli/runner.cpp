@@ -29,6 +29,7 @@ namespace filescope::cli
         }
         ResultStore store;
 
+        std::atomic<size_t> next_file_id{ 0 };
         auto worker = [&]()
             {
                 while (true)
@@ -80,12 +81,13 @@ namespace filescope::cli
         std::vector<std::jthread> threads;
         threads.reserve(num_threads);
 
-        {
-            for (int i = 0; i < num_threads; i++)
-            {
-                threads.emplace_back(worker);
-            }
-        }
+        
+		for (int i = 0; i < num_threads; i++)
+		{
+			threads.emplace_back(worker);
+		}
+
+		threads.clear();
 
         auto results = store.snapshot();
         print_table(results);

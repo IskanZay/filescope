@@ -11,9 +11,6 @@ namespace filescope::cli
 {
     class Runner 
     {
-    private:
-        std::atomic<size_t> next_file_id{ 0 };
-
     public:
         int run(const Options& opts);
     };
