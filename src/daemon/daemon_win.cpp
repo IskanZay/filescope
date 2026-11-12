@@ -40,9 +40,11 @@ namespace filescope
 
 					DWORD bytes_written;
 					WriteFile(pipe, response.c_str(), static_cast<DWORD>(response.size()), &bytes_written, nullptr);
-					//Недописано
 				}
+				DisconnectNamedPipe(pipe);
 			}
+			CloseHandle(pipe);
 		}
 	}
 }
+#endif
